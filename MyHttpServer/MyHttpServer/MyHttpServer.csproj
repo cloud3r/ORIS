@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Framework\Http\" />
+  	<None Update="settings.json">
+    	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  	</None>
+	<None Update="search-engine.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    	</None>
+    </ItemGroup>
+
+</Project>
