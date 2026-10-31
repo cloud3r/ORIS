@@ -94,7 +94,8 @@ public class ControllerHandler : Handler
                 ret = t.GetType().IsGenericType ? ((dynamic)t).Result : null;
             }
 
-            await Send(response, 200, ret?.ToString() ?? "");
+            string result = ret?.ToString() ?? "";
+            await Send(response, 200, result, DetectContentType(result));
         }
         catch (Exception ex)
         {
@@ -108,24 +109,24 @@ public class ControllerHandler : Handler
             }
         }
 
-        static async Task Send(HttpListenerResponse response, int status, string body)
+        static async Task Send(HttpListenerResponse response, int status, string body,
+            string contentType = "text/plain")
         {
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(body);
             response.StatusCode = status;
-            response.ContentType = "text/plain; charset=utf-8";
+            response.ContentType = $"{contentType}; charset=utf-8";
             response.ContentLength64 = bytes.Length;
             await response.OutputStream.WriteAsync(bytes);
             response.Close();
         }
+        
         static async Task<Dictionary<string, string>> ReadFormAsync(HttpListenerRequest request)
         {
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            // данные из query string, если есть (?email=...)
+            
             foreach (string? key in request.QueryString.AllKeys)
                 if (key != null) result[key] = request.QueryString[key] ?? "";
-
-            // данные из тела формы (POST, application/x-www-form-urlencoded)
+            
             if (request.HasEntityBody &&
                 request.ContentType?.StartsWith("application/x-www-form-urlencoded",
                     StringComparison.OrdinalIgnoreCase) == true)
@@ -139,6 +140,15 @@ public class ControllerHandler : Handler
             }
 
             return result;
+        }
+        
+        static string DetectContentType(string body)
+        {
+            string s = body.TrimStart();
+
+            if (s.StartsWith("<")) return "text/html";
+            if (s.StartsWith("{") || s.StartsWith("[")) return "application/json";
+            return "text/plain";
         }
     }
 }
