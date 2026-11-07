@@ -1,71 +1,97 @@
 ﻿using System.Net;
+using CustomHttpServer.Framework.Configuration;
 using CustomHttpServer.Framework.Handlers;
-using CustomHttpServer.Helpers;
+
+namespace CustomHttpServer.Framework.Core;
 
 public class HttpServer
 {
-    private readonly ConfigurationManager _settings;
     private readonly HttpListener _listener;
-    private readonly Handler _chain;
+    private readonly ConfigurationManager _settings;
+    private readonly RequestHandler _handler;
 
-    public HttpServer(ConfigurationManager settings)
+    public HttpServer(
+        ConfigurationManager settings,
+        RequestHandler handler)
     {
         _settings = settings;
+        _handler = handler;
+
         _listener = new HttpListener();
 
-        string path = _settings.Server.Path;
-        if (!path.EndsWith("/")) path += "/";
-        _listener.Prefixes.Add($"http://{_settings.Server.Host}:{_settings.Server.Port}{path}");
+        string prefix =
+            $"http://{_settings.Server.Host}:{_settings.Server.Port}/";
 
-        Handler staticFiles = new StaticFilesHandler();
-        Handler controllers = new ControllerHandler();
-        staticFiles.Successor = controllers;
-        _chain = staticFiles;
+        _listener.Prefixes.Add(prefix);
+
+        Console.WriteLine($"Адрес сервера: {prefix}");
     }
-
+    
     public Task StartAsync()
     {
         _listener.Start();
+
+        Console.WriteLine("HTTP-сервер успешно запущен!");
+
         return ListenAsync();
     }
-
-    public void Stop() => _listener.Stop();
-
+    
     private async Task ListenAsync()
     {
         try
         {
             while (_listener.IsListening)
             {
-                HttpListenerContext context = await _listener.GetContextAsync();
-                _ = Task.Run(() => ProcessRequestAsync(context));
+                HttpListenerContext context =
+                    await _listener.GetContextAsync();
+                
+                _ = Task.Run(() => HandleRequestAsync(context));
             }
         }
-        catch (Exception ex) when (ex is HttpListenerException or ObjectDisposedException)
+        catch (HttpListenerException)
         {
-            Console.WriteLine("Сервер остановлен");
+            if (!_listener.IsListening)
+            {
+                Console.WriteLine("Прослушивание сервера завершено.");
+            }
+            else
+            {
+                throw;
+            }
+        }
+        catch (ObjectDisposedException)
+        {
+            Console.WriteLine("Сервер завершил работу.");
         }
     }
-
-    private async Task ProcessRequestAsync(HttpListenerContext context)
+    
+    private async Task HandleRequestAsync(HttpListenerContext context)
     {
         try
         {
-            await _chain.HandleRequest(context);
-            Console.WriteLine($"Обработан запрос: {context.Request.Url}");
+            Console.WriteLine(
+                $"Получен запрос: {context.Request.HttpMethod} " +
+                $"{context.Request.Url}"
+            );
+
+            await _handler.HandleAsync(context);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
-            try
-            {
-                context.Response.StatusCode = 500;
-            }
-            catch {  }
+            Console.WriteLine(
+                $"Ошибка обработки запроса: {ex.Message}"
+            );
+
+            context.Response.Abort();
         }
-        finally
+    }
+    
+    public void Stop()
+    {
+        if (_listener.IsListening)
         {
-            try { context.Response.Close(); } catch { }
+            _listener.Stop();
+            Console.WriteLine("HTTP-сервер остановлен.");
         }
     }
 }

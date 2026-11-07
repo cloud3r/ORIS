@@ -1,75 +1,96 @@
 ﻿using System.Net;
-using CustomHttpServer.Helpers;
+using CustomHttpServer.Framework.Content;
+using CustomHttpServer.Framework.Helpers;
 
 namespace CustomHttpServer.Framework.Handlers;
 
-public class StaticFilesHandler : Handler
+public class StaticFilesHandler : RequestHandler
 {
-    public override async Task HandleRequest(HttpListenerContext context)
+    private readonly string _staticDirectory;
+
+    public StaticFilesHandler()
     {
-        var request = context.Request;
-        var response = context.Response;
-        string path = request.Url!.LocalPath;
-
-        Console.WriteLine($"StaticFilesHandler: {request.HttpMethod} {request.Url}");
-
-        try
-        {
-            string root = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "static"));
-            string filePath = Path.GetFullPath(Path.Combine(root, path.TrimStart('/')));
-            
-            if (!filePath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
-            {
-                await SendTextAsync(response, 403, "Forbidden");
-                return;
-            }
-
-            if (Directory.Exists(filePath))
-                filePath = Path.Combine(filePath, "index.html");
-
-            if (File.Exists(filePath))
-            {
-                await SendFileAsync(response, filePath, 200);
-                return;
-            }
-            
-            if (Path.HasExtension(path))
-            {
-                string notFound = Path.Combine(root, "404.html");
-                if (File.Exists(notFound)) await SendFileAsync(response, notFound, 404);
-                else await SendTextAsync(response, 404, "Not found");
-                return;
-            }
-
-            if (Successor != null)
-                await Successor.HandleRequest(context);
-            else
-                await SendTextAsync(response, 404, "Not found");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            try { await SendTextAsync(response, 500, ex.Message); } catch { }
-        }
+        _staticDirectory = Path.Combine(
+            AppContext.BaseDirectory,
+            "static"
+        );
     }
 
-    private static async Task SendFileAsync(HttpListenerResponse response, string filePath, int status)
+    public override async Task HandleAsync(HttpListenerContext context)
     {
+        HttpListenerRequest request = context.Request;
+        HttpListenerResponse response = context.Response;
+
+        string requestedPath = Uri.UnescapeDataString(
+            request.Url!.AbsolutePath
+        );
+        
+        if (!requestedPath.EndsWith('/'))
+        {
+            string? directoryPath = UriHelper.ResolveSafePath(
+                requestedPath.TrimStart('/'),
+                _staticDirectory
+            );
+
+            if (directoryPath != null && Directory.Exists(directoryPath))
+            {
+                response.StatusCode = (int)HttpStatusCode.Redirect;
+                response.RedirectLocation = requestedPath + "/";
+                response.Close();
+                return;
+            }
+        }
+
+        string relativePath = requestedPath.TrimStart('/');
+        
+        if (relativePath.Equals(
+                "SearcherFinder",
+                StringComparison.OrdinalIgnoreCase) ||
+            relativePath.Equals(
+                "SearcherFinder/",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            relativePath = "SearcherFinder/search-engine.html";
+        }
+        
+        if (string.IsNullOrEmpty(relativePath))
+        {
+            relativePath = "SearcherFinder/search-engine.html";
+        }
+        
+        string? filePath = UriHelper.ResolveSafePath(
+            relativePath,
+            _staticDirectory
+        );
+
+        if (filePath == null)
+        {
+            await HandleNextAsync(context);
+            return;
+        }
+        
+        if (Directory.Exists(filePath))
+        {
+            filePath = Path.Combine(filePath, "index.html");
+        }
+        
+        if (!File.Exists(filePath))
+        {
+            await HandleNextAsync(context);
+            return;
+        }
+        
         byte[] buffer = await File.ReadAllBytesAsync(filePath);
-        response.StatusCode = status;
-        response.ContentType = MimeHandler.GetMimeType(filePath);
+        
+        response.StatusCode = (int)HttpStatusCode.OK;
+        response.ContentType = MimeTypeProvider.GetMimeType(filePath);
         response.ContentLength64 = buffer.Length;
+        
         await response.OutputStream.WriteAsync(buffer);
-        response.Close();
-    }
 
-    private static async Task SendTextAsync(HttpListenerResponse response, int status, string text)
-    {
-        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(text);
-        response.StatusCode = status;
-        response.ContentType = "text/plain; charset=utf-8";
-        response.ContentLength64 = buffer.Length;
-        await response.OutputStream.WriteAsync(buffer);
+        Console.WriteLine($"Файл отправлен: {filePath}");
+        Console.WriteLine("HTTP 200 OK");
+
         response.Close();
     }
 }

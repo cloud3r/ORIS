@@ -1,4 +1,4 @@
-﻿using CustomHttpServer.Attributes;
+﻿using CustomHttpServer.Framework.Attributes;
 
 namespace CustomHttpServer.Controllers;
 
@@ -6,27 +6,38 @@ namespace CustomHttpServer.Controllers;
 public class AuthController
 {
     [Get("login")]
-    public string Login()
+    public string GetLoginPage()
     {
-        string viewsPath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "static",
-            "loginform"
-        );
-
-        string htmlPath = Path.Combine(viewsPath, "login.html");
-
-        return File.Exists(htmlPath)
-            ? File.ReadAllText(htmlPath)
-            : "<h1>Login page not found!</h1>";
+        return """
+               <!DOCTYPE html>
+               <html lang="ru">
+               <head>
+                   <meta charset="UTF-8">
+                   <meta http-equiv="refresh" content="0; url=/Rockstar/">
+                   <title>Redirecting...</title>
+               </head>
+               <body>
+                   <p>Перенаправление на страницу авторизации...</p>
+               </body>
+               </html>
+               """;
     }
-    
-    [Post("login")]
-    public string Login(string email, string password)
-    {
-        Console.WriteLine($"Login: {email}");
-        Console.WriteLine($"Password: {password}");
 
-        return "OK";
+    [Post("login")]
+    public string Login(string email, string password, bool check = false)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+
+        Console.WriteLine("[SIGN IN]");
+        Console.WriteLine($"Email: {email}");
+        Console.WriteLine($"Remember me: {check}");
+
+        Console.ResetColor();
+
+        return $"""
+                <h1>Login successful!</h1>
+                <p>You signed in as {email}</p>
+                <p>Remember me: {(check ? "yes" : "no")}</p>
+                """;
     }
 }

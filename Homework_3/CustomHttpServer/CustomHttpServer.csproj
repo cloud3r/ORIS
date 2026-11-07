@@ -11,10 +11,12 @@
         <None Update="settings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-
-        <Content Include="static\**\*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        <None Update="static\search-engine.html">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+	<Content Include="static\**\*">
+        	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    	</Content>
     </ItemGroup>
 
 </Project>

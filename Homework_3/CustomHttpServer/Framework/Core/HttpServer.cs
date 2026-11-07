@@ -1,28 +1,55 @@
 ﻿using System.Net;
-using CustomHttpServer.Helpers;
+using CustomHttpServer.Content;
+using CustomHttpServer.Framework.Configuation;
+using CustomHttpServer.Framework.Helpers;
+
+namespace CustomHttpServer.Framework.Core;
 
 public class HttpServer
 {
     private readonly ConfigurationManager _settings;
     private readonly HttpListener _listener;
+    private readonly string _staticDirectory;
 
     public HttpServer(ConfigurationManager settings)
     {
         _settings = settings;
         _listener = new HttpListener();
-        string prefixes = $"http://{_settings.Server.Host}:{_settings.Server.Port}{_settings.Server.Path}";
-        _listener.Prefixes.Add(prefixes);
+
+        _staticDirectory = Path.Combine(
+            AppContext.BaseDirectory,
+            "static"
+        );
+
+        if (!Directory.Exists(_staticDirectory))
+            throw new DirectoryNotFoundException(
+                "Каталог static не найден!"
+            );
+
+        string prefix =
+            $"http://{_settings.Server.Host}:{_settings.Server.Port}/";
+
+        Console.WriteLine($"Адрес сервера: {prefix}");
+
+        _listener.Prefixes.Add(prefix);
     }
 
     public Task StartAsync()
     {
         _listener.Start();
+
+        Console.WriteLine("Сервер успешно запущен!");
+
         return ListenAsync();
     }
 
     public void Stop()
     {
-        _listener.Stop();
+        if (_listener.IsListening)
+        {
+            _listener.Stop();
+            Console.WriteLine("Сервер остановлен.");
+        }
     }
 
     private async Task ListenAsync()
@@ -31,61 +58,135 @@ public class HttpServer
         {
             while (_listener.IsListening)
             {
-                HttpListenerContext context = await _listener.GetContextAsync();
+                HttpListenerContext context =
+                    await _listener.GetContextAsync();
+
                 await HandleRequest(context);
             }
         }
         catch (HttpListenerException)
         {
-            Console.WriteLine("Сервер остановлен");
+            if (!_listener.IsListening)
+                Console.WriteLine("Прослушивание сервера завершено.");
+            else
+                throw;
+        }
+        catch (ObjectDisposedException)
+        {
+            Console.WriteLine("Сервер завершил работу.");
         }
     }
 
     private async Task HandleRequest(HttpListenerContext context)
     {
-        Console.WriteLine($"REQUEST: {context.Request.HttpMethod} {context.Request.Url}");
-        HttpListenerResponse response = context.Response;
         HttpListenerRequest request = context.Request;
-        string pathBaseDirectory = AppContext.BaseDirectory;
-        string localPath = request.Url.LocalPath;
-        string pathNotFound = Path.Combine(pathBaseDirectory, "static", "404.html");
-        string pathToStatic = Path.Combine(pathBaseDirectory, "static");
-        string? path = UriHelper.ResolveSafePath(
-            localPath,
-            pathToStatic
+        HttpListenerResponse response = context.Response;
+
+        Console.WriteLine(
+            $"Получен запрос: {request.HttpMethod} {request.Url}"
         );
 
-        if (path == null)
+        try
         {
-            response.StatusCode = (int)HttpStatusCode.NotFound;
-            byte[] bufferNotFound = await File.ReadAllBytesAsync(pathNotFound);
-            response.ContentLength64 = bufferNotFound.Length;
-            response.ContentType = MimeHandler.GetMimeType(pathNotFound);
-            await response.OutputStream.WriteAsync(bufferNotFound, 0, bufferNotFound.Length);
-            response.OutputStream.Close();
-            return;
-        }
+            string requestedPath = Uri.UnescapeDataString(
+                request.Url!.AbsolutePath
+            );
+
+            string relativePath = requestedPath.TrimStart('/');
         
-        if (Directory.Exists(path))
+            if (relativePath.Equals(
+                    "404.html",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                await SendNotFound(response);
+                return;
+            }
+        
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                relativePath = "SearcherFinder/search-engine.html";
+            }
+        
+            string? filePath = UriHelper.ResolveSafePath(
+                relativePath,
+                _staticDirectory
+            );
+
+            if (filePath == null)
+            {
+                await SendNotFound(response);
+                return;
+            }
+        
+            if (Directory.Exists(filePath))
+            {
+                filePath = Path.Combine(filePath, "index.html");
+            }
+        
+            if (!File.Exists(filePath))
+            {
+                await SendNotFound(response);
+                return;
+            }
+        
+            byte[] buffer = await File.ReadAllBytesAsync(filePath);
+        
+            response.ContentType = MimeTypeProvider.GetMimeType(filePath);
+
+            response.StatusCode = (int)HttpStatusCode.OK;
+            response.ContentLength64 = buffer.Length;
+
+            await response.OutputStream.WriteAsync(buffer);
+
+            Console.WriteLine($"Файл отправлен: {filePath}");
+            Console.WriteLine("HTTP 200 OK");
+        }
+        catch (Exception ex)
         {
-            path = Path.Combine(path, "index.html");
+            Console.WriteLine($"Ошибка обработки запроса: {ex.Message}");
+
+            if (response.OutputStream.CanWrite)
+            {
+                response.StatusCode =
+                    (int)HttpStatusCode.InternalServerError;
+            }
         }
-        
-        if (!File.Exists(path))
+        finally
         {
-            response.StatusCode = (int)HttpStatusCode.NotFound;
-            byte[] bufferNotFound = await File.ReadAllBytesAsync(pathNotFound);
-            response.ContentLength64 = bufferNotFound.Length;
-            response.ContentType = MimeHandler.GetMimeType(pathNotFound);
-            await response.OutputStream.WriteAsync(bufferNotFound, 0, bufferNotFound.Length);
-            response.OutputStream.Close();
-            return;
+            response.Close();
         }
-        byte[]  buffer = await File.ReadAllBytesAsync(path);
-        response.ContentLength64 = buffer.Length;
-        response.ContentType = MimeHandler.GetMimeType(path);
-        await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
-        response.OutputStream.Close();
-        
+    }
+
+    private async Task SendNotFound(HttpListenerResponse response)
+    {
+        string notFoundPath = Path.Combine(
+            _staticDirectory,
+            "404.html"
+        );
+
+        response.StatusCode = (int)HttpStatusCode.NotFound;
+
+        if (File.Exists(notFoundPath))
+        {
+            byte[] buffer = await File.ReadAllBytesAsync(notFoundPath);
+
+            response.ContentType = MimeTypeProvider.GetMimeType(notFoundPath);
+            response.ContentLength64 = buffer.Length;
+
+            await response.OutputStream.WriteAsync(buffer);
+        }
+        else
+        {
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(
+                "404 - Page Not Found"
+            );
+
+            response.ContentType = "text/plain; charset=utf-8";
+            response.ContentLength64 = buffer.Length;
+
+            await response.OutputStream.WriteAsync(buffer);
+        }
+
+        Console.WriteLine("404 Not Found: запрашиваемый файл отсутствует.");
     }
 }

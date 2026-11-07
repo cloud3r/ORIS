@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Clouder\\RiderProjects\\CustomHttpServer\\CustomHttpServer\\CustomHttpServer.csproj",
+      "projectUniqueName": "C:\\Users\\Clouder\\Desktop\\ORIS\\HomeWork_3\\CustomHttpServer\\CustomHttpServer.csproj",
       "projectName": "CustomHttpServer",
-      "projectPath": "C:\\Users\\Clouder\\RiderProjects\\CustomHttpServer\\CustomHttpServer\\CustomHttpServer.csproj",
+      "projectPath": "C:\\Users\\Clouder\\Desktop\\ORIS\\HomeWork_3\\CustomHttpServer\\CustomHttpServer.csproj",
       "packagesPath": "C:\\Users\\Clouder\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Clouder\\RiderProjects\\CustomHttpServer\\CustomHttpServer\\obj\\",
+      "outputPath": "C:\\Users\\Clouder\\Desktop\\ORIS\\HomeWork_3\\CustomHttpServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

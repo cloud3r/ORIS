@@ -1,5 +1,4 @@
-﻿
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -12,23 +11,12 @@
         <None Update="settings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-
-        <Content Include="static/**/*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-
-	<Content Include="Templates/**/*">
+        <None Update="static\search-engine.html">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    	<Content Include="static\**\*">
         	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     	</Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.13" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Templates\" />
     </ItemGroup>
 
 </Project>

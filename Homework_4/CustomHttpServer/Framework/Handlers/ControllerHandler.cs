@@ -1,13 +1,13 @@
-﻿using System.Net;
+﻿﻿using System.Net;
 using System.Reflection;
 using System.Web;
 using CustomHttpServer.Attributes;
 
 namespace CustomHttpServer.Framework.Handlers;
 
-public class ControllerHandler : Handler
+public class ControllerHandler : RequestHandler
 {
-    public async override Task HandleRequest(HttpListenerContext context)
+    public override async Task HandleAsync(HttpListenerContext context)
     {
         var request = context.Request;
         var response = context.Response;
@@ -21,9 +21,10 @@ public class ControllerHandler : Handler
 
             if (isFile)
             {
-                if (Successor != null) await Successor.HandleRequest(context);
-                else await Send(response, 404, "Not found");
-                return;
+                await HandleNextAsync(context);
+            }
+            else{
+                await Send(response, 404, "Not found");
             }
 
             string[] segments = request.Url.Segments
