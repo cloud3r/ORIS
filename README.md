@@ -1,1 +1,2 @@
-Багаутдинов Дамир Риядович 11-507 ИТИС КФУ
+* HomeWork\_1 — Верстка сайта: «SearcherFinder» + HTML Knowledge
+
