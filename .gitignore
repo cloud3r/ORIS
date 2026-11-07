@@ -457,6 +457,10 @@ out/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
+# Rider / JetBrains (в том числе вложенные .idea)
+**/.idea/
+**/.idea.*/
+
 # JIRA plugin
 atlassian-ide-plugin.xml
 
