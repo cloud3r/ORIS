@@ -8,7 +8,17 @@ public class AuthController
     [Get("login")]
     public string Login()
     {
-        return "Hello from AuthController!";
+        string viewsPath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "static",
+            "loginform"
+        );
+
+        string htmlPath = Path.Combine(viewsPath, "login.html");
+
+        return File.Exists(htmlPath)
+            ? File.ReadAllText(htmlPath)
+            : "<h1>Login page not found!</h1>";
     }
     
     [Post("login")]
@@ -16,7 +26,7 @@ public class AuthController
     {
         Console.WriteLine($"Login: {email}");
         Console.WriteLine($"Password: {password}");
+
         return "OK";
     }
-    
 }

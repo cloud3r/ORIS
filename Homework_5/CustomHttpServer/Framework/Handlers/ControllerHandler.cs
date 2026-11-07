@@ -11,9 +11,6 @@ public class ControllerHandler : Handler
     {
         var request = context.Request;
         var response = context.Response;
-        Console.WriteLine($"Method: {request.HttpMethod}");
-        Console.WriteLine($"ContentType: {request.ContentType}");
-        Console.WriteLine($"ContentLength: {request.ContentLength64}");
 
         try
         {

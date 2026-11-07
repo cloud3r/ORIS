@@ -10,13 +10,20 @@ public class StaticFilesHandler : Handler
         var request = context.Request;
         var response = context.Response;
         string path = request.Url!.LocalPath;
-
-        Console.WriteLine($"StaticFilesHandler: {request.HttpMethod} {request.Url}");
-
+        
         try
         {
             string root = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "static"));
-            string filePath = Path.GetFullPath(Path.Combine(root, path.TrimStart('/')));
+            string relativePath = path.TrimStart('/');
+
+            if (relativePath.StartsWith("static/", StringComparison.OrdinalIgnoreCase))
+            {
+                relativePath = relativePath.Substring("static/".Length);
+            }
+
+            string filePath = Path.GetFullPath(
+                Path.Combine(root, relativePath)
+            );
             
             if (!filePath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
             {
