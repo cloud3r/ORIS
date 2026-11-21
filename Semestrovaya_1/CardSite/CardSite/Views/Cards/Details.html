@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{Name}} - {{CardNumber}} | CardSite</title>
+
+    <link rel="stylesheet" href="/css/details.css">
+</head>
+
+<body>
+
+<div class="modal">
+
+    <a href="/cards" class="modal__backdrop" aria-label="Close"></a>
+
+    <a href="/cards" class="modal__close" aria-label="Close">
+        &times;
+    </a>
+
+    <div class="modal__window">
+
+        <article class="card-detail">
+
+            <div class="card-detail__img">
+                <img
+                        src="{{ImageUrl}}"
+                        alt="{{CardNumber}} {{Name}}">
+            </div>
+
+            <div class="card-detail__info">
+
+                <div class="card-head">
+                    <span class="card-head__number">
+                        {{CardNumber}}
+                    </span>
+
+                    <span class="badge">
+                        {{Rarity}}
+                    </span>
+                </div>
+
+                <h2 class="card-head__name">
+                    {{Name}}
+                </h2>
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <div class="stat__label">Card type</div>
+                        <div class="stat__value">{{CardType}}</div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat__label">Color</div>
+                        <div class="stat__value">{{Color}}</div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat__label">Cost</div>
+                        <div class="stat__value">{{Cost}}</div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat__label">Specified cost</div>
+                        <div class="stat__value">{{SpecifiedCost}}</div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat__label">Power</div>
+                        <div class="stat__value">{{Power}}</div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat__label">Combo power</div>
+                        <div class="stat__value">{{ComboPower}}</div>
+                    </div>
+
+                </div>
+
+                <section class="info-panel">
+
+                    <h3 class="info-panel__title">
+                        Special Traits
+                    </h3>
+
+                    <div class="info-panel__value">
+                        {{foreach SpecialTraits}}
+                        <span class="trait">{{Name}}</span>
+                        {{/foreach}}
+                    </div>
+
+                </section>
+
+                <section class="info-panel">
+
+                    <h3 class="info-panel__title">
+                        Skills
+                    </h3>
+
+                    <div class="info-panel__value">
+                        {{Skills}}
+                    </div>
+
+                </section>
+
+                <section class="info-panel">
+
+                    <h3 class="info-panel__title">
+                        Where to get it
+                    </h3>
+
+                    <div class="info-panel__value">
+                        {{SetName}} [{{SetCode}}]
+                    </div>
+
+                </section>
+
+                <section class="info-panel">
+
+                    <h3 class="info-panel__title">
+                        Products
+                    </h3>
+
+                    <div class="info-panel__value info-panel__value--row">
+
+                        {{foreach Products}}
+
+                        <div class="product-item">
+
+                            <img
+                                    src="{{ImageUrl}}"
+                                    alt="{{Name}}"
+                                    class="product-item__image">
+
+                            <span class="product-item__name">
+                                    {{Name}}
+                                </span>
+
+                            <a
+                                    href="{{ProductUrl}}"
+                                    class="btn-pill">
+                                VIEW
+                            </a>
+
+                        </div>
+
+                        {{/foreach}}
+
+                    </div>
+
+                </section>
+
+                <div class="card-detail__actions">
+                    <a href="/cards" class="btn-pill">
+                        BACK TO CARDS
+                    </a>
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</div>
+
+</body>
+</html>

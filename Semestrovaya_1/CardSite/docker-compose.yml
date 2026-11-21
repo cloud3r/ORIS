@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:18.6
+    container_name: cardsitedb
+    environment:
+      POSTGRES_DB: cardsitedb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cardsitedevpassword}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./CardSiteDB.sql:/docker-entrypoint-initdb.d/01-CardSiteDB.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cardsitedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cardsite
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CARDSITE_CONNECTION_STRING: "Host=db;Port=5432;Database=cardsitedb;Username=postgres;Password=${POSTGRES_PASSWORD:-cardsitedevpassword}"
+      CARDSITE_ADMIN_USERNAME: "${CARDSITE_ADMIN_USERNAME:-admin}"
+      CARDSITE_ADMIN_PASSWORD: "${CARDSITE_ADMIN_PASSWORD:?Set CARDSITE_ADMIN_PASSWORD in .env}"
+      CARDSITE_ADMIN_EMAIL: "${CARDSITE_ADMIN_EMAIL:?Set CARDSITE_ADMIN_EMAIL in .env}"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

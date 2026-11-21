@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>CARD DATABASE | Dragon Ball Super Card Game Fusion World</title>
+
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/details.css">
+    <link rel="icon" href="/images/icons/logovkladka.ico" type="image/x-icon">
+
+    <script src="/js/app.js" defer></script>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="header-navigation">
+
+        <a class="brand" href="/" aria-label="Dragon Ball Card Game home">
+            <img
+                    src="/images/icons/logo.png"
+                    class="headerLogo"
+                    alt="Dragon Ball Super Card Game">
+        </a>
+
+        <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+            <a href="#">INTRODUCTION</a>
+            <a href="#">PRODUCTS</a>
+            <a href="#">EVENTS</a>
+            <a href="/cards" aria-current="page">CARDS</a>
+            <a href="#">NEWS</a>
+            <a href="#">RULES</a>
+            <a href="#">FAQ</a>
+            <a href="#">STORES</a>
+
+            <a class="download" href="#">
+                <img
+                        src="/images/icons/download-digital.png"
+                        class="digitalLogo"
+                        alt="Download digital version">
+            </a>
+        </nav>
+
+    </div>
+
+    <div class="header-actions">
+
+        <a class="pill card-search" href="#search">
+            <span class="search-icon">⌕</span>
+            Card Search
+        </a>
+
+        <button class="pill language" type="button">
+            <span>EN</span>
+            <i></i>
+            English
+            <b>⌄</b>
+        </button>
+
+        <a class="social" href="#" aria-label="X">
+            <img src="images/icons/twitter.png">
+        </a>
+
+        <a class="social facebook" href="#" aria-label="Facebook">
+            <img src="images/icons/facebook.png">
+        </a>
+
+        <a class="social youtube" href="#" aria-label="YouTube">
+            <img src="images/icons/youtube.png">
+        </a>
+
+    </div>
+
+    <button
+            class="mobile-menu"
+            id="menuToggle"
+            type="button"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"/>
+        </svg>
+
+    </button>
+
+</header>
+
+
+<main class="content">
+
+    <div class="page-heading">
+
+        <h1>
+            <span class="title-orb"></span>
+            CARD DATABASE
+        </h1>
+
+        <div class="breadcrumbs">
+            <a href="/">HOME</a>
+            <span>›</span>
+            <strong>CARD DATABASE</strong>
+        </div>
+
+    </div>
+
+
+    <form id="searchForm" method="get" action="/cards">
+
+        <section class="search-panel" id="search" aria-label="Card search">
+
+            <div class="top-filters">
+
+                <div class="field-block">
+
+                    <h2>
+                        <span class="bullet"></span>
+                        Card name &amp; keyword search
+                    </h2>
+
+                    <div class="keyword-control">
+
+                        <input
+                                id="keyword"
+                                type="search"
+                                name="q"
+                                placeholder="Ex) LEADER Son Goku"
+                                aria-label="Card name and keyword search"
+                                value="{{Keyword}}">
+
+                        <button class="small-search" type="submit">
+                            <span>⌕</span>
+                            Search
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="field-block">
+
+                    <h2>
+                        <span class="bullet"></span>
+                        Filter by series
+                    </h2>
+
+                    <div class="select-wrap">
+
+                        <select
+                                id="series"
+                                name="product"
+                                aria-label="Filter by series">
+
+                            <option value="all" {{AllSeriesSelected}}>All Series</option>
+
+                            {{foreach Products}}
+                            <option value="{{Id}}" {{Selected}}>
+                                {{Name}} [{{Code}}]
+                            </option>
+                            {{/foreach}}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="advanced-row">
+
+                <button
+                        id="advancedToggle"
+                        class="advanced-toggle"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="advancedFilters">
+
+                    <span>＋</span>
+                    Advanced Search
+                    <b class="filter-count" hidden></b>
+
+                </button>
+
+            </div>
+
+
+            <div id="advancedFilters" class="advanced-filters">
+
+                <div class="advanced-inner">
+
+                    <div class="advanced-row two-columns">
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by card type</h3>
+
+                            <div class="checks">
+
+                                <label>
+                                    <input type="checkbox" name="type" value="1"
+                                           {{Type1Checked}}>
+                                    LEADER
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="type" value="2"
+                                           {{Type2Checked}}>
+                                    BATTLE
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="type" value="3"
+                                           {{Type3Checked}}>
+                                    EXTRA
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="type" value="4"
+                                           {{Type4Checked}}>
+                                    ENERGY MARKER
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by color</h3>
+
+                            <div class="checks colors">
+
+                                <label>
+                                    <input type="checkbox" name="color" value="1"
+                                           {{Color1Checked}}>
+                                    <i class="color red"></i>
+                                    Red
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="color" value="2"
+                                           {{Color2Checked}}>
+                                    <i class="color blue"></i>
+                                    Blue
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="color" value="3"
+                                           {{Color3Checked}}>
+                                    <i class="color green"></i>
+                                    Green
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="color" value="4"
+                                           {{Color4Checked}}>
+                                    <i class="color yellow"></i>
+                                    Yellow
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="color" value="5"
+                                           {{Color5Checked}}>
+                                    <i class="color black"></i>
+                                    Black
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="advanced-row">
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by rarity</h3>
+
+                            <div class="checks">
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="1"
+                                           {{Rarity1Checked}}>
+                                    L
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="2"
+                                           {{Rarity2Checked}}>
+                                    C
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="3"
+                                           {{Rarity3Checked}}>
+                                    UC
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="4"
+                                           {{Rarity4Checked}}>
+                                    R
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="5"
+                                           {{Rarity5Checked}}>
+                                    SR
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="6"
+                                           {{Rarity6Checked}}>
+                                    SCR
+                                </label>
+
+                                <label>
+                                    <input type="checkbox" name="rarity" value="7"
+                                           {{Rarity7Checked}}>
+                                    PR
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="advanced-row">
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by cost</h3>
+
+                            <div class="range-container">
+
+                                <div class="range-labels">
+                                    <span>Min Value: <output id="costMinValue">{{CostMin}}</output></span>
+                                    <span>Max Value: <output id="costMaxValue">{{CostMax}}</output></span>
+                                </div>
+
+                                <div class="range-sliders">
+
+                                    <input
+                                            type="range"
+                                            id="costMin"
+                                            name="costMin"
+                                            min="0"
+                                            max="9"
+                                            value="{{CostMin}}">
+
+                                    <input
+                                            type="range"
+                                            id="costMax"
+                                            name="costMax"
+                                            min="0"
+                                            max="9"
+                                            value="{{CostMax}}">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="advanced-row">
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by power</h3>
+
+                            <div class="range-container">
+
+                                <div class="range-labels">
+                                    <span>Min Value: <output id="powerMinValue">{{PowerMin}}</output></span>
+                                    <span>Max Value: <output id="powerMaxValue">{{PowerMax}}</output></span>
+                                </div>
+
+                                <div class="range-sliders">
+
+                                    <input
+                                            type="range"
+                                            id="powerMin"
+                                            name="powerMin"
+                                            min="0"
+                                            max="55000"
+                                            step="1000"
+                                            value="{{PowerMin}}">
+
+                                    <input
+                                            type="range"
+                                            id="powerMax"
+                                            name="powerMax"
+                                            min="0"
+                                            max="55000"
+                                            step="1000"
+                                            value="{{PowerMax}}">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="advanced-row">
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by combo power</h3>
+
+                            <div class="range-container">
+
+                                <div class="range-labels">
+                                    <span>Min Value: <output id="comboPowerMinValue">{{ComboPowerMin}}</output></span>
+                                    <span>Max Value: <output id="comboPowerMaxValue">{{ComboPowerMax}}</output></span>
+                                </div>
+
+                                <div class="range-sliders">
+
+                                    <input
+                                            type="range"
+                                            id="comboPowerMin"
+                                            name="comboPowerMin"
+                                            min="0"
+                                            max="10000"
+                                            step="1000"
+                                            value="{{ComboPowerMin}}">
+
+                                    <input
+                                            type="range"
+                                            id="comboPowerMax"
+                                            name="comboPowerMax"
+                                            min="0"
+                                            max="10000"
+                                            step="1000"
+                                            value="{{ComboPowerMax}}">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="advanced-row">
+
+                        <div class="advanced-field">
+
+                            <h3>Filter by Special Traits</h3>
+
+                            <div class="special-traits">
+
+                                <label>
+                                    <input
+                                            type="checkbox"
+                                            id="allSpecialTraits"
+                                            name="specialTraits"
+                                            value="all"
+                                            {{AllTraitsChecked}}>
+                                    All
+                                </label>
+
+                                {{foreach SpecialTraits}}
+                                <label>
+                                    <input
+                                            type="checkbox"
+                                            name="specialTraits"
+                                            value="{{Id}}"
+                                            {{Selected}}>
+                                    {{Name}}
+                                </label>
+                                {{/foreach}}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="search-actions">
+
+            <button class="search-main" type="submit">
+                <span>⌕</span>
+                SEARCH
+            </button>
+
+            <a class="clear-search" href="/cards">
+                Clear search conditions
+            </a>
+
+        </div>
+
+    </form>
+
+
+    <div id="activeFilters" class="active-filters" aria-label="Applied filters"></div>
+
+
+    <section class="results" aria-label="Card results">
+
+        <div class="results-heading">
+
+            <div>
+                <span>Result</span>
+
+                <strong id="resultCount">
+                    {{TotalCards}}
+                </strong>
+
+                <b>cards</b>
+            </div>
+
+        </div>
+
+
+        <section class="card-grid" id="cardGrid">
+
+            {{foreach Cards}}
+
+            <a
+                    href="/cards/{{Id}}"
+                    class="card-tile">
+
+                <img
+                        src="{{ImageUrl}}"
+                        alt="{{CardNumber}} {{Name}}"
+                        loading="lazy">
+
+            </a>
+
+            {{/foreach}}
+
+        </section>
+
+        {{if TotalPages}}
+
+        <nav class="pagination" id="pagination" aria-label="Card pages">
+
+            <a class="page-arrow {{PreviousClass}}"
+               href="{{PreviousUrl}}"
+               aria-label="Previous page">
+                &#10094;
+            </a>
+
+            {{foreach PageNumbers}}
+
+            <a class="page-number {{CurrentClass}}"
+               href="{{Url}}">
+                {{Number}}
+            </a>
+
+            {{/foreach}}
+
+            <a class="page-arrow {{NextClass}}"
+               href="{{NextUrl}}"
+               aria-label="Next page">
+                &#10095;
+            </a>
+
+        </nav>
+
+        {{/if}}
+
+    </section>
+
+</main>
+
+<footer class="site-footer">
+
+    <div class="footer-main">
+
+        <div class="footer-brand">
+
+            <img
+                    class="footer-logo"
+                    src="/images/icons/footer_logo.png"
+                    alt="Dragon Ball Super Card Game Fusion World">
+
+            <a class="footer-region" href="#">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"
+                          fill="none" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+                GLOBAL
+            </a>
+
+            <button class="footer-language" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="4" width="8" height="16" rx="1.5" fill="currentColor"/>
+                    <rect x="13" y="4" width="8" height="7" rx="1.5" fill="currentColor"/>
+                    <rect x="13" y="13" width="8" height="7" rx="1.5" fill="currentColor"/>
+                </svg>
+                <i></i>
+                <span>English</span>
+                <svg class="footer-language__arrow" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l6 6 6-6M6 12l6 6 6-6" fill="none" stroke="currentColor"
+                          stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <div class="footer-social">
+
+                <strong>LINKS</strong>
+
+                <a href="#" aria-label="X">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+
+                <a href="#" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M12 2a10 10 0 0 0-1.6 19.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 12 2z"/>
+                    </svg>
+                </a>
+
+                <a href="#" aria-label="YouTube">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" fill-rule="evenodd" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15l5-3-5-3z"/>
+                    </svg>
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="footer-info">
+
+            <nav class="footer-links" aria-label="Footer">
+                <a href="#">COOKIE SETTINGS</a>
+                <a href="#">PRIVACY POLICY</a>
+                <a href="#">SUPPORT</a>
+            </nav>
+
+            <p class="footer-masters">DRAGON BALL SUPER CARD GAME MASTERS</p>
+
+            <a class="footer-banner" href="#">
+                <img
+                        src="/images/icons/footer.image.jpg"
+                        alt="Dragon Ball Super Card Game Masters">
+            </a>
+
+            <ul class="footer-notes">
+                <li>*Unauthorized use, reproduction or reprinting of any images, text, or data on this website is prohibited.</li>
+                <li>*Products are under development and the images on this website may differ from the actual product.</li>
+                <li>*The release schedule and other details are subject to change without notice.</li>
+                <li>*Apple, and the Apple logo are trademarks of Apple Inc. in North America or the local region. App Store is Apple Inc.&rsquo;s service mark.</li>
+                <li>*Google Play and the Google Play logo are trademarks or registered trademarks of Google LLC.</li>
+            </ul>
+
+            <ul class="footer-companies">
+                <li><img src="/images/icons/footer.img1.webp" alt="Toei Animation"></li>
+                <li><img src="/images/icons/footer.img2.webp" alt="Bandai Namco Group"></li>
+                <li><img src="/images/icons/footer.img3.webp" alt="Bandai Namco Group"></li>
+                <li><img src="/images/icons/footer.img4.webp" alt="Bandai"></li>
+                <li><img src="/images/icons/footer.img5.webp" alt="Bandai Namco"></li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <div class="footer-copy">
+        <span>&copy;BIRD STUDIO/SHUEISHA</span>
+        <span>&copy;BIRD STUDIO/SHUEISHA, TOEI ANIMATION</span>
+        <span>&copy;Bandai Namco Entertainment Inc.</span>
+    </div>
+
+</footer>
+
+</body>
+</html>

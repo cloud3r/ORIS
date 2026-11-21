@@ -1,0 +1,269 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Card</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-topbar">
+    <span>CardSite — Administration</span>
+
+    <form action="/admin/logout" method="POST">
+        <button type="submit" class="logout-button">
+            Выйти
+        </button>
+    </form>
+</div>
+
+<main class="admin-page">
+    <section class="admin-panel">
+
+        <div class="admin-header">
+            <div>
+                <span class="admin-subtitle">CARDS DATABASE</span>
+                <h1>Edit Card</h1>
+                <p>Modify card information and characteristics.</p>
+            </div>
+
+            <a href="/admin/cards" class="back-button">← Back to Cards</a>
+        </div>
+
+        <form action="/admin/cards/edit" method="POST">
+
+            <input type="hidden" name="id" value="{{Card.Id}}">
+
+            <div class="form-section">
+                <h2>Basic Information</h2>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="name">Card Name <span>*</span></label>
+                        <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                maxlength="100"
+                                placeholder="Enter card name"
+                                value="{{Card.Name}}"
+                                required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number <span>*</span></label>
+                        <input
+                                type="text"
+                                id="cardNumber"
+                                name="cardNumber"
+                                placeholder="FB11-001"
+                                pattern="[A-Za-z]{2,4}[0-9]{2}-[0-9]{3}"
+                                value="{{Card.CardNumber}}"
+                                required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="colorId">Color <span>*</span></label>
+                        <select id="colorId" name="colorId" required>
+                            {{foreach Colors}}
+                            <option value="{{Id}}"{{SelectedAttribute}}>{{Name}}</option>
+                            {{/foreach}}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="typeId">Card Type <span>*</span></label>
+                        <select id="typeId" name="typeId" required>
+                            {{foreach Types}}
+                            <option value="{{Id}}"{{SelectedAttribute}}>{{Name}}</option>
+                            {{/foreach}}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rarityId">Rarity <span>*</span></label>
+                        <select id="rarityId" name="rarityId" required>
+                            {{foreach Rarities}}
+                            <option value="{{Id}}"{{SelectedAttribute}}>{{Code}}</option>
+                            {{/foreach}}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="setId">Card Set <span>*</span></label>
+                        <select id="setId" name="setId" required>
+                            {{foreach Sets}}
+                            <option value="{{Id}}"{{SelectedAttribute}}>{{Name}}</option>
+                            {{/foreach}}
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Card Parameters</h2>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="cost">Cost</label>
+                        <input
+                                type="number"
+                                id="cost"
+                                name="cost"
+                                min="0"
+                                max="9"
+                                placeholder="Optional"
+                                value="{{Card.Cost}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specifiedCost">Specified Cost</label>
+                        <input
+                                type="text"
+                                id="specifiedCost"
+                                name="specifiedCost"
+                                placeholder="Optional"
+                                value="{{Card.SpecifiedCost}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="power">Power</label>
+                        <input
+                                type="number"
+                                id="power"
+                                name="power"
+                                min="0"
+                                max="55000"
+                                placeholder="Optional"
+                                value="{{Card.Power}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comboPower">Combo Power</label>
+                        <input
+                                type="number"
+                                id="comboPower"
+                                name="comboPower"
+                                min="0"
+                                max="10000"
+                                placeholder="Optional"
+                                value="{{Card.ComboPower}}">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Special Traits</h2>
+
+                <div class="traits-header">
+                    <input
+                            type="text"
+                            id="traitSearch"
+                            class="trait-search"
+                            placeholder="Search special traits...">
+
+                    <span id="traitCounter">0 selected</span>
+                </div>
+
+                <div class="special-traits-list">
+                    {{foreach SpecialTraits}}
+                    <label class="special-trait-option">
+                        <input
+                                type="checkbox"
+                                name="specialTraitIds"
+                                value="{{Id}}"{{SelectedAttribute}}>
+                        <span>{{Name}}</span>
+                    </label>
+                    {{/foreach}}
+                </div>
+
+                <button type="button" id="clearTraits" class="clear-traits">
+                    Clear selection
+                </button>
+            </div>
+
+            <div class="form-section">
+                <h2>Additional Information</h2>
+
+                <div class="form-group">
+                    <label for="imageUrl">Image URL <span>*</span></label>
+                    <input
+                            type="text"
+                            id="imageUrl"
+                            name="imageUrl"
+                            placeholder="images/cards/FB11/FB11-001.webp"
+                            value="{{Card.ImageUrl}}"
+                            required>
+                </div>
+
+                <div class="form-group">
+                    <label for="skills">Skills</label>
+                    <textarea
+                            id="skills"
+                            name="skills"
+                            rows="5"
+                            placeholder="Enter card skills...">{{Card.Skills}}</textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/admin/cards" class="cancel-button">Cancel</a>
+
+                <button type="submit" class="submit-button">
+                    Save Changes
+                </button>
+            </div>
+
+        </form>
+    </section>
+</main>
+
+<script>
+    const traitSearch = document.getElementById("traitSearch");
+    const traitOptions = document.querySelectorAll(".special-trait-option");
+    const traitCounter = document.getElementById("traitCounter");
+    const clearTraits = document.getElementById("clearTraits");
+
+    function updateTraitCounter() {
+        const selected = document.querySelectorAll(
+            'input[name="specialTraitIds"]:checked'
+        ).length;
+
+        traitCounter.textContent = `${selected} selected`;
+    }
+
+    traitSearch.addEventListener("input", function () {
+        const search = this.value.trim().toLowerCase();
+
+        traitOptions.forEach(option => {
+            const name = option.textContent.trim().toLowerCase();
+            option.style.display = name.includes(search) ? "flex" : "none";
+        });
+    });
+
+    traitOptions.forEach(option => {
+        const checkbox = option.querySelector("input");
+        checkbox.addEventListener("change", updateTraitCounter);
+    });
+
+    clearTraits.addEventListener("click", function () {
+        document.querySelectorAll(
+            'input[name="specialTraitIds"]'
+        ).forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        updateTraitCounter();
+    });
+
+    updateTraitCounter();
+</script>
+
+</body>
+</html>
