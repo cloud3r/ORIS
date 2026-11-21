@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cardsitedevpassword}
     volumes:
       - postgres_data:/var/lib/postgresql
-      - ./CardSiteDB.sql:/docker-entrypoint-initdb.d/01-CardSiteDB.sql:ro
+      - ./DataBase/CardSiteDB.sql:/docker-entrypoint-initdb.d/01-CardSiteDB.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d cardsitedb"]
       interval: 5s
